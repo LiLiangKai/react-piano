@@ -66,6 +66,11 @@
 .audio-canvas {
   &-wrap {
     text-align: center;
+
+    .audio {
+      display: block;
+      margin: 20px auto;
+    }
   }
   background: #f8f8f8;
 }

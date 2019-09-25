@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react'
+import AudioCanvas from './audio-canvas'
 import { sleep } from './utils'
 import SONGS from './songs'
-import './style.css'
+import './style.scss'
 
 const VOICE_MAP = {
   0: [261.63, 293.67, 329.63, 349.23, 391.99, 440, 493.88],
@@ -189,9 +190,9 @@ export default class Piano extends PureComponent {
   }
 
   renderSong = () => {
-    return <div>
+    return <div className="song-list">
       {SONGS.map((song, index) => {
-        return <button key={`song-${index}`} onClick={() => { this.playSong(song.data) }}>{song.label}</button>
+        return <button className="btn-song" key={`song-${index}`} onClick={() => { this.playSong(song.data) }}>{song.label}</button>
       })}
     </div>
   }
@@ -202,6 +203,7 @@ export default class Piano extends PureComponent {
         <div className="piano-hd">piano</div>
         <div className="piano-bd">{this.renderPianoKey()}</div>
         <div className="song-wrap">{this.renderSong()}</div>
+        <AudioCanvas />
       </div>
     )
   }
