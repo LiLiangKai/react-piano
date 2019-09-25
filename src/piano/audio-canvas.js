@@ -24,7 +24,8 @@ class AudioCanvas extends React.Component {
   }
 
   componentDidMount() {
-    this.ininAudioContext()
+    this.initAudioContext()
+
     const canvas = this.canvasRef.current
     const audio = this.audioRef.current
     audio.src = `${process.env.PUBLIC_URL}song.mp3`
@@ -32,11 +33,12 @@ class AudioCanvas extends React.Component {
     this.canvasCtx.lineWidth = 2
     this.canvasCtx.fillStyle = '#4285f4'
 
-
+    // 创建音频数据源，并连接
     this.audioSource = this.audioCtx.createMediaElementSource(audio)
     this.audioSource.connect(this.analyser)
     this.analyser.connect(this.audioCtx.destination)
 
+    // audio元素绑定play事件
     audio.addEventListener('play', this.playEvent.bind(this, this.canvasCtx, this.analyser))
     audio.addEventListener('pause', () => {
       console.log('stop')
@@ -48,7 +50,8 @@ class AudioCanvas extends React.Component {
     audio.removeEventListener( 'play', this.playEvent.bind( this, this.canvasCtx, this.analyser ))
   }
 
-  ininAudioContext () {
+  // 初始化音频上下文环境
+  initAudioContext () {
     this.audioCtx = new AudioContext()
     this.analyser = this.audioCtx.createAnalyser()
     this.analyser.fftSize = 256
@@ -58,11 +61,15 @@ class AudioCanvas extends React.Component {
     this.draw(canvasCtx, analyser)
   }
 
+  // 绘制音频
   draw = ( canvasCtx, analyser ) => {
     canvasCtx.clearRect(0, 0, WIDTH, HEIGHT)
+    // 音频数据分析
     const bufferLength = analyser.frequencyBinCount
     const dataArray = new Uint8Array( bufferLength)
     analyser.getByteFrequencyData( dataArray )
+
+    // 计算每根音柱的宽高，起始位置，
     let barWidth = parseInt( .5 * WIDTH / bufferLength )
     let barHeight
     let x = 0
@@ -70,7 +77,7 @@ class AudioCanvas extends React.Component {
       const value = dataArray[i]
       barHeight = parseInt(0.4 * value)
       canvasCtx.fillRect( x, HEIGHT - barHeight, barWidth, barHeight )
-      x += barWidth + 3
+      x += barWidth + 3 // 间隔3像素
     }
     
     requestAnimationFrame( this.draw.bind(this, canvasCtx, analyser) )
